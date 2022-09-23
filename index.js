@@ -25,19 +25,20 @@ app.get("/api/hello", function (req, res) {
 });
 
 app.get('/api', (req, res) => {
-  res.json({unix: Math.floor(new Date().getTime() / 1000), utc: new Date().toGMTString()});
+  res.json({"unix": Math.floor(new Date().getTime() / 1000), utc: new Date().toGMTString()});
 });
 
 app.get('/api/:date', (req, res) => {
-  if(req.params.date.match(/\d{4}-\d{2}-\d{2}/)) {
-    res.json({unix: new Date(req.params.date).getTime() / 1000, utc: new Date(req.params.date).toGMTString()});
-  } else if(parseInt(req.params.date)) {
-    res.json({unix: parseInt(req.params.date), utc: new Date(parseInt(req.params.date)).toGMTString()})
+  if(new Date(req.params.date).toGMTString() === 'Invalid Date') {
+    if(parseInt(req.params.date)) {
+      res.json({"unix": parseInt(req.params.date), utc: new Date(parseInt(req.params.date)).toGMTString()})
+    } else {
+      res.json({error: "Invalid Date"})
+    }
   } else {
-    res.json({error: "Invalid Date"})
+    res.json({"unix": new Date(req.params.date).getTime() / 1000, utc: new Date(req.params.date).toGMTString()});
   }
 });
-
 // listen for requests :)
 var listener = app.listen(process.env.PORT || 3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
