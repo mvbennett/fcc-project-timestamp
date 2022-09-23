@@ -24,12 +24,17 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
-app.get('/api/:date', (req, res) => {
+app.get('/api', (req, res) => {
+  res.json({unix: Math.floor(new Date().getTime() / 1000), utc: new Date().toGMTString()});
+});
 
+app.get('/api/:date', (req, res) => {
   if(req.params.date.match(/\d{4}-\d{2}-\d{2}/)) {
     res.json({unix: new Date(req.params.date).getTime() / 1000, utc: new Date(req.params.date).toGMTString()});
-  } else {
+  } else if(parseInt(req.params.date)) {
     res.json({unix: parseInt(req.params.date), utc: new Date(parseInt(req.params.date)).toGMTString()})
+  } else {
+    res.json({error: "Invalid Date"})
   }
 });
 
